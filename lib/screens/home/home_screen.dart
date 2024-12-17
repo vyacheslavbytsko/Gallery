@@ -21,13 +21,18 @@ class HomeScreen extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
+
   @override
   Widget build(BuildContext context) {
-    return MediaQuery.orientationOf(context) == Orientation.portrait
+    return MediaQuery.orientationOf(context) ==
+            Orientation.portrait // нормальное положение
         ? Scaffold(
             body: navigationShell,
             bottomNavigationBar: NavigationBar(
-                elevation: 3,
+                backgroundColor: ElevationOverlay.applySurfaceTint(
+                    Theme.of(context).colorScheme.surface,
+                    Theme.of(context).colorScheme.surfaceTint,
+                    3),
                 onDestinationSelected: (int index) => _onTap(context, index),
                 selectedIndex: navigationShell.currentIndex,
                 destinations: List.generate(
@@ -37,49 +42,53 @@ class HomeScreen extends StatelessWidget {
                         label: destinations[index].label,
                         selectedIcon: destinations[index].selectedIcon))))
         : Scaffold(
-            appBar: AppBar(
-              elevation: 3,
-              title: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Row(
-                  children: [
-                    Icon(Icons.landscape),
-                    SizedBox(width: 8),
-                    Text("Beshence Gallery"),
-                  ],
-                ),
-              ),
-              actions: [
-                IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle_outlined, size: 32)),
-                const SizedBox(width: 4),
-              ],
-            ),
+            // ютуб-положение
             body: Row(
               children: [
-                Column(mainAxisSize: MainAxisSize.min, children: [
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: Material(
-                      child: NavigationRail(
-                        backgroundColor: ElevationOverlay.applySurfaceTint(Theme.of(context).colorScheme.background, Theme.of(context).colorScheme.surfaceTint, 3),
-                        extended: true,
-                        labelType: NavigationRailLabelType.none,
-                        selectedIndex: navigationShell.currentIndex,
-                        onDestinationSelected: (int index) =>
-                            _onTap(context, index),
-                        destinations: List.generate(
-                          destinations.length,
-                          (index) => NavigationRailDestination(
-                            icon: destinations[index].icon,
-                            label: Text(destinations[index].label),
-                            selectedIcon: destinations[index].selectedIcon,
+                Stack(
+                    children: [
+                      Column(
+                        children: [
+                          SizedBox(height: kToolbarHeight,),
+                          Flexible(
+                            fit: FlexFit.tight,
+                            child: NavigationRail(
+                              backgroundColor: ElevationOverlay.applySurfaceTint(
+                                  Theme.of(context).colorScheme.surface,
+                                  Theme.of(context).colorScheme.surfaceTint,
+                                  3),
+                              labelType: NavigationRailLabelType.selected,
+                              selectedIndex: navigationShell.currentIndex,
+                              onDestinationSelected: (int index) =>
+                                  _onTap(context, index),
+                              destinations: List.generate(
+                                destinations.length,
+                                    (index) => NavigationRailDestination(
+                                  icon: destinations[index].icon,
+                                  label: Text(destinations[index].label),
+                                  selectedIcon: destinations[index].selectedIcon,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ),
-                  )
-                ]),
-                Expanded(child: navigationShell)
+                      Container(
+                        color: ElevationOverlay.applySurfaceTint(
+                            Theme.of(context).colorScheme.surface,
+                            Theme.of(context).colorScheme.surfaceTint,
+                            3),
+                        height:
+                        MediaQuery.of(context).padding.top + kToolbarHeight,
+                        width: MediaQuery.of(context).padding.left + 80,
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).padding.top, left: MediaQuery.of(context).padding.left),
+                            child: const Icon(Icons.landscape)),
+                      ),
+                    ]
+                ),
+                Expanded(child: SafeArea(top: false, bottom: false, left: false, right: true, child: navigationShell))
               ],
             ),
           );

@@ -15,7 +15,7 @@ class _HomeScreenSearchFragmentState extends State<HomeScreenSearchFragment> {
     return Scaffold(
       body: CustomScrollView(
           slivers: [
-            if(MediaQuery.orientationOf(context) == Orientation.portrait) const HomeAppBar(title: "Search"),
+            const HomeAppBar(title: "Search"),
             SliverList(
               delegate: SliverChildListDelegate(
                   [

@@ -8,21 +8,29 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(context) {
-    return SliverAppBar(
-      scrolledUnderElevation: 3,
-      title: Row(
-        children: [
-          const Icon(Icons.landscape),
-          const SizedBox(width: 8),
-          Text(title),
+    return MediaQuery.removePadding(
+      context: context,
+      removeLeft: true,
+      child: SliverAppBar(
+        scrolledUnderElevation: 3,
+        title: Row(
+          children: [
+            /*if (MediaQuery.orientationOf(context) == Orientation.portrait) const Icon(Icons.landscape),
+            if (MediaQuery.orientationOf(context) == Orientation.portrait) const SizedBox(width: 8),*/
+            Text(title),
+          ],
+        ),
+        floating: floating,
+        pinned: !floating,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined),
+            tooltip: 'Comment Icon',
+            onPressed: () {},
+          ),
+          const SizedBox(width: 4),
         ],
       ),
-      floating: floating,
-      pinned: !floating,
-      actions: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle_outlined, size: 32)),
-        const SizedBox(width: 4),
-      ],
     );
   }
 }

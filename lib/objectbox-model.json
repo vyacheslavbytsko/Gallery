@@ -1,0 +1,49 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:1395603826646173581",
+      "lastPropertyId": "4:8313232054194860331",
+      "name": "LocalMedia",
+      "properties": [
+        {
+          "id": "1:4492390324706704613",
+          "name": "objectBoxId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2826093325435507764",
+          "name": "id",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "1:6525581546453560848"
+        },
+        {
+          "id": "3:1461656876877862324",
+          "name": "folder",
+          "type": 9
+        },
+        {
+          "id": "4:8313232054194860331",
+          "name": "modifiedAt",
+          "type": 10
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "1:1395603826646173581",
+  "lastIndexId": "1:6525581546453560848",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

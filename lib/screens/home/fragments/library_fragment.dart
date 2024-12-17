@@ -15,7 +15,7 @@ class _HomeScreenLibraryFragmentState extends State<HomeScreenLibraryFragment> {
     return Scaffold(
       body: CustomScrollView(
           slivers: [
-            if(MediaQuery.orientationOf(context) == Orientation.portrait) const HomeAppBar(title: "Library"),
+            const HomeAppBar(title: "Library"),
             SliverList(
               delegate: SliverChildListDelegate(
                   [

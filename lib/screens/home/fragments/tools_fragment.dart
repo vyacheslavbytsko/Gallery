@@ -15,7 +15,7 @@ class _HomeScreenToolsFragmentState extends State<HomeScreenToolsFragment> {
     return Scaffold(
       body: CustomScrollView(
           slivers: [
-            if(MediaQuery.orientationOf(context) == Orientation.portrait) const HomeAppBar(title: "Tools & Settings"),
+            const HomeAppBar(title: "Tools & Settings"),
             SliverList(
               delegate: SliverChildListDelegate(
                   [
