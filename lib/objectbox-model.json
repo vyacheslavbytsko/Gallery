@@ -4,46 +4,127 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:1395603826646173581",
-      "lastPropertyId": "4:8313232054194860331",
-      "name": "LocalMedia",
+      "id": "3:8272010615488476952",
+      "lastPropertyId": "5:8160287525477644366",
+      "name": "LocalFolderV1",
       "properties": [
         {
-          "id": "1:4492390324706704613",
+          "id": "1:1884828595375405771",
           "name": "objectBoxId",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:2826093325435507764",
+          "id": "2:1965883718285503426",
           "name": "id",
           "type": 9,
           "flags": 2080,
-          "indexId": "1:6525581546453560848"
+          "indexId": "3:4167161588524741431"
         },
         {
-          "id": "3:1461656876877862324",
-          "name": "folder",
+          "id": "3:3737657201820471873",
+          "name": "name",
           "type": 9
         },
         {
-          "id": "4:8313232054194860331",
-          "name": "modifiedAt",
+          "id": "4:7916198900173042684",
+          "name": "sync",
+          "type": 1
+        },
+        {
+          "id": "5:8160287525477644366",
+          "name": "show",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:522788543480063592",
+      "lastPropertyId": "11:3715698149547649912",
+      "name": "MediaV1",
+      "properties": [
+        {
+          "id": "1:4266871039109809402",
+          "name": "objectBoxId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1129998127766521662",
+          "name": "id",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "4:5821563923542258093"
+        },
+        {
+          "id": "3:4233426936072225458",
+          "name": "localId",
+          "type": 9
+        },
+        {
+          "id": "4:1376289271095430910",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "5:1020168622298348716",
+          "name": "type",
+          "type": 9
+        },
+        {
+          "id": "6:3108574526731309989",
+          "name": "date",
+          "type": 10
+        },
+        {
+          "id": "8:6497502731023033539",
+          "name": "localFolderId",
+          "type": 9
+        },
+        {
+          "id": "9:2181890822542569897",
+          "name": "synced",
+          "type": 1
+        },
+        {
+          "id": "10:2380366378230060293",
+          "name": "show",
+          "type": 1
+        },
+        {
+          "id": "11:3715698149547649912",
+          "name": "localModifiedAt",
           "type": 10
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "1:1395603826646173581",
-  "lastIndexId": "1:6525581546453560848",
+  "lastEntityId": "4:522788543480063592",
+  "lastIndexId": "4:5821563923542258093",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    1395603826646173581,
+    4099167492744733647
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    182418256967310136,
+    3322817588226861660,
+    4492390324706704613,
+    2826093325435507764,
+    1461656876877862324,
+    8313232054194860331,
+    4150768301432586334,
+    1698954292945670266,
+    3708581448785267892,
+    5254276524996979733,
+    376866964114502309
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

@@ -14,36 +14,101 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
-import 'boxes/media_box.dart';
+import 'boxes/media_box_v1.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
 final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(1, 1395603826646173581),
-      name: 'LocalMedia',
-      lastPropertyId: const obx_int.IdUid(4, 8313232054194860331),
+      id: const obx_int.IdUid(3, 8272010615488476952),
+      name: 'LocalFolderV1',
+      lastPropertyId: const obx_int.IdUid(5, 8160287525477644366),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 4492390324706704613),
+            id: const obx_int.IdUid(1, 1884828595375405771),
             name: 'objectBoxId',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 2826093325435507764),
+            id: const obx_int.IdUid(2, 1965883718285503426),
             name: 'id',
             type: 9,
             flags: 2080,
-            indexId: const obx_int.IdUid(1, 6525581546453560848)),
+            indexId: const obx_int.IdUid(3, 4167161588524741431)),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 1461656876877862324),
-            name: 'folder',
+            id: const obx_int.IdUid(3, 3737657201820471873),
+            name: 'name',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 8313232054194860331),
-            name: 'modifiedAt',
+            id: const obx_int.IdUid(4, 7916198900173042684),
+            name: 'sync',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 8160287525477644366),
+            name: 'show',
+            type: 1,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(4, 522788543480063592),
+      name: 'MediaV1',
+      lastPropertyId: const obx_int.IdUid(11, 3715698149547649912),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 4266871039109809402),
+            name: 'objectBoxId',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 1129998127766521662),
+            name: 'id',
+            type: 9,
+            flags: 2080,
+            indexId: const obx_int.IdUid(4, 5821563923542258093)),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 4233426936072225458),
+            name: 'localId',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 1376289271095430910),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 1020168622298348716),
+            name: 'type',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 3108574526731309989),
+            name: 'date',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 6497502731023033539),
+            name: 'localFolderId',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 2181890822542569897),
+            name: 'synced',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 2380366378230060293),
+            name: 'show',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 3715698149547649912),
+            name: 'localModifiedAt',
             type: 10,
             flags: 0)
       ],
@@ -86,35 +151,48 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(1, 1395603826646173581),
-      lastIndexId: const obx_int.IdUid(1, 6525581546453560848),
+      lastEntityId: const obx_int.IdUid(4, 522788543480063592),
+      lastIndexId: const obx_int.IdUid(4, 5821563923542258093),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
-      retiredEntityUids: const [],
+      retiredEntityUids: const [1395603826646173581, 4099167492744733647],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [],
+      retiredPropertyUids: const [
+        182418256967310136,
+        3322817588226861660,
+        4492390324706704613,
+        2826093325435507764,
+        1461656876877862324,
+        8313232054194860331,
+        4150768301432586334,
+        1698954292945670266,
+        3708581448785267892,
+        5254276524996979733,
+        376866964114502309
+      ],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
       version: 1);
 
   final bindings = <Type, obx_int.EntityDefinition>{
-    LocalMedia: obx_int.EntityDefinition<LocalMedia>(
+    LocalFolderV1: obx_int.EntityDefinition<LocalFolderV1>(
         model: _entities[0],
-        toOneRelations: (LocalMedia object) => [],
-        toManyRelations: (LocalMedia object) => {},
-        getId: (LocalMedia object) => object.objectBoxId,
-        setId: (LocalMedia object, int id) {
+        toOneRelations: (LocalFolderV1 object) => [],
+        toManyRelations: (LocalFolderV1 object) => {},
+        getId: (LocalFolderV1 object) => object.objectBoxId,
+        setId: (LocalFolderV1 object, int id) {
           object.objectBoxId = id;
         },
-        objectToFB: (LocalMedia object, fb.Builder fbb) {
+        objectToFB: (LocalFolderV1 object, fb.Builder fbb) {
           final idOffset = fbb.writeString(object.id);
-          final folderOffset = fbb.writeString(object.folder);
-          fbb.startTable(5);
+          final nameOffset = fbb.writeString(object.name);
+          fbb.startTable(6);
           fbb.addInt64(0, object.objectBoxId);
           fbb.addOffset(1, idOffset);
-          fbb.addOffset(2, folderOffset);
-          fbb.addInt64(3, object.modifiedAt.millisecondsSinceEpoch);
+          fbb.addOffset(2, nameOffset);
+          fbb.addBool(3, object.sync);
+          fbb.addBool(4, object.show);
           fbb.finish(fbb.endTable());
           return object.objectBoxId;
         },
@@ -125,15 +203,90 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
           final idParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
-          final folderParam = const fb.StringReader(asciiOptimization: true)
+          final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 8, '');
-          final modifiedAtParam = DateTime.fromMillisecondsSinceEpoch(
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
-          final object = LocalMedia(
+          final showParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false);
+          final syncParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 10, false);
+          final object = LocalFolderV1(
               objectBoxId: objectBoxIdParam,
               id: idParam,
-              folder: folderParam,
-              modifiedAt: modifiedAtParam);
+              name: nameParam,
+              show: showParam,
+              sync: syncParam);
+
+          return object;
+        }),
+    MediaV1: obx_int.EntityDefinition<MediaV1>(
+        model: _entities[1],
+        toOneRelations: (MediaV1 object) => [],
+        toManyRelations: (MediaV1 object) => {},
+        getId: (MediaV1 object) => object.objectBoxId,
+        setId: (MediaV1 object, int id) {
+          object.objectBoxId = id;
+        },
+        objectToFB: (MediaV1 object, fb.Builder fbb) {
+          final idOffset = fbb.writeString(object.id);
+          final localIdOffset =
+              object.localId == null ? null : fbb.writeString(object.localId!);
+          final nameOffset = fbb.writeString(object.name);
+          final typeOffset = fbb.writeString(object.type);
+          final localFolderIdOffset = object.localFolderId == null
+              ? null
+              : fbb.writeString(object.localFolderId!);
+          fbb.startTable(12);
+          fbb.addInt64(0, object.objectBoxId);
+          fbb.addOffset(1, idOffset);
+          fbb.addOffset(2, localIdOffset);
+          fbb.addOffset(3, nameOffset);
+          fbb.addOffset(4, typeOffset);
+          fbb.addInt64(5, object.date.millisecondsSinceEpoch);
+          fbb.addOffset(7, localFolderIdOffset);
+          fbb.addBool(8, object.synced);
+          fbb.addBool(9, object.show);
+          fbb.addInt64(10, object.localModifiedAt?.millisecondsSinceEpoch);
+          fbb.finish(fbb.endTable());
+          return object.objectBoxId;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final localModifiedAtValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 24);
+          final objectBoxIdParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final localIdParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 8);
+          final localFolderIdParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 18);
+          final localModifiedAtParam = localModifiedAtValue == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(localModifiedAtValue);
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final typeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final dateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0));
+          final showParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false);
+          final syncedParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false);
+          final object = MediaV1(
+              objectBoxId: objectBoxIdParam,
+              id: idParam,
+              localId: localIdParam,
+              localFolderId: localFolderIdParam,
+              localModifiedAt: localModifiedAtParam,
+              name: nameParam,
+              type: typeParam,
+              date: dateParam,
+              show: showParam,
+              synced: syncedParam);
 
           return object;
         })
@@ -142,21 +295,68 @@ obx_int.ModelDefinition getObjectBoxModel() {
   return obx_int.ModelDefinition(model, bindings);
 }
 
-/// [LocalMedia] entity fields to define ObjectBox queries.
-class LocalMedia_ {
-  /// See [LocalMedia.objectBoxId].
+/// [LocalFolderV1] entity fields to define ObjectBox queries.
+class LocalFolderV1_ {
+  /// See [LocalFolderV1.objectBoxId].
   static final objectBoxId =
-      obx.QueryIntegerProperty<LocalMedia>(_entities[0].properties[0]);
+      obx.QueryIntegerProperty<LocalFolderV1>(_entities[0].properties[0]);
 
-  /// See [LocalMedia.id].
+  /// See [LocalFolderV1.id].
   static final id =
-      obx.QueryStringProperty<LocalMedia>(_entities[0].properties[1]);
+      obx.QueryStringProperty<LocalFolderV1>(_entities[0].properties[1]);
 
-  /// See [LocalMedia.folder].
-  static final folder =
-      obx.QueryStringProperty<LocalMedia>(_entities[0].properties[2]);
+  /// See [LocalFolderV1.name].
+  static final name =
+      obx.QueryStringProperty<LocalFolderV1>(_entities[0].properties[2]);
 
-  /// See [LocalMedia.modifiedAt].
-  static final modifiedAt =
-      obx.QueryDateProperty<LocalMedia>(_entities[0].properties[3]);
+  /// See [LocalFolderV1.sync].
+  static final sync =
+      obx.QueryBooleanProperty<LocalFolderV1>(_entities[0].properties[3]);
+
+  /// See [LocalFolderV1.show].
+  static final show =
+      obx.QueryBooleanProperty<LocalFolderV1>(_entities[0].properties[4]);
+}
+
+/// [MediaV1] entity fields to define ObjectBox queries.
+class MediaV1_ {
+  /// See [MediaV1.objectBoxId].
+  static final objectBoxId =
+      obx.QueryIntegerProperty<MediaV1>(_entities[1].properties[0]);
+
+  /// See [MediaV1.id].
+  static final id =
+      obx.QueryStringProperty<MediaV1>(_entities[1].properties[1]);
+
+  /// See [MediaV1.localId].
+  static final localId =
+      obx.QueryStringProperty<MediaV1>(_entities[1].properties[2]);
+
+  /// See [MediaV1.name].
+  static final name =
+      obx.QueryStringProperty<MediaV1>(_entities[1].properties[3]);
+
+  /// See [MediaV1.type].
+  static final type =
+      obx.QueryStringProperty<MediaV1>(_entities[1].properties[4]);
+
+  /// See [MediaV1.date].
+  static final date =
+      obx.QueryDateProperty<MediaV1>(_entities[1].properties[5]);
+
+  /// See [MediaV1.localFolderId].
+  static final localFolderId =
+      obx.QueryStringProperty<MediaV1>(_entities[1].properties[6]);
+
+  /// See [MediaV1.synced].
+  static final synced =
+      obx.QueryBooleanProperty<MediaV1>(_entities[1].properties[7]);
+
+  /// See [MediaV1.show].
+  static final show =
+      obx.QueryBooleanProperty<MediaV1>(_entities[1].properties[8]);
+
+  /// See [MediaV1.localModifiedAt].
+  static final localModifiedAt =
+      obx.QueryDateProperty<MediaV1>(_entities[1].properties[9]);
 }

@@ -1,15 +1,18 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery/screens/home/home_screen.dart';
+import 'package:gallery/screens/local_folder/local_folder_screen.dart';
 import 'package:gallery/screens/settings/settings_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
 
-import 'boxes/media_box.dart';
+import 'boxes/media_box_v1.dart';
 import 'isolates/media_isolate.dart';
+import 'misc.dart';
 
 late MediaBox mediaBox;
 
@@ -20,23 +23,30 @@ Future<void> main() async {
 
   MediaIsolate().start();
 
-  runApp(const MyApp());
+  Directory temp = await getTemporaryDirectory();
+  runApp(TemporaryDirectory(
+    temp: temp,
+    child: const MyApp(),
+  ));
 }
 
 GoRouter router = GoRouter(
-  initialLocation: "/timeline",
+  initialLocation: "/",
   routes: [
     homeScreenRoute,
     GoRoute(
       path: "/settings",
       builder: (context, state) => const SettingsScreen()),
+    GoRoute(
+      path: "/localFolder/:localFolderId",
+      builder: (context, state) => LocalFolderScreen(localFolder: (mediaBox.getLocalFolder(state.pathParameters["localFolderId"]!))!)
+    )
   ],
 );
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -45,18 +55,18 @@ class MyApp extends StatelessWidget {
 
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-          ColorScheme lightColorScheme = lightDynamic?.harmonized() ??
-              ColorScheme.fromSeed(seedColor: Colors.green);
-          ColorScheme darkColorScheme = darkDynamic?.harmonized() ??
-              ColorScheme.fromSeed(
-                  seedColor: Colors.green, brightness: Brightness.dark);
-          return MaterialApp.router(
-            routerConfig: router,
-            title: 'Gallery',
-            theme: ThemeData(colorScheme: lightColorScheme),
-            darkTheme: ThemeData(colorScheme: darkColorScheme),
-            themeMode: ThemeMode.system,
-          );
-        });
+      ColorScheme lightColorScheme = lightDynamic?.harmonized() ??
+          ColorScheme.fromSeed(seedColor: Colors.green);
+      ColorScheme darkColorScheme = darkDynamic?.harmonized() ??
+          ColorScheme.fromSeed(
+              seedColor: Colors.green, brightness: Brightness.dark);
+      return MaterialApp.router(
+        routerConfig: router,
+        title: 'Gallery',
+        theme: ThemeData(colorScheme: lightColorScheme),
+        darkTheme: ThemeData(colorScheme: darkColorScheme),
+        themeMode: ThemeMode.system,
+      );
+    });
   }
 }

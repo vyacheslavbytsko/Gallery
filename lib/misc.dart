@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
@@ -13,13 +14,6 @@ List<Widget> flatten(List<dynamic> list) {
     }
   }
   return temp;
-  /*return list.expand((element) {
-    if (element is List) {
-      return flatten(element);
-    } else {
-      return [element];
-    }
-  }).toList();*/
 }
 
 class IsolateHandler {
@@ -97,4 +91,33 @@ class TimelineChangeNotifier extends ChangeNotifier {
   }
 }
 
+class LocalFoldersChangeNotifier extends ChangeNotifier {
+  void updateLocalFolders() {
+    notifyListeners();
+  }
+}
+
 TimelineChangeNotifier timelineChangeNotifier = TimelineChangeNotifier();
+LocalFoldersChangeNotifier localFoldersChangeNotifier = LocalFoldersChangeNotifier();
+
+class TemporaryDirectory extends InheritedWidget {
+  final Directory temp;
+
+  const TemporaryDirectory(
+      {super.key, required this.temp, required super.child});
+
+  static TemporaryDirectory? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<TemporaryDirectory>();
+  }
+
+  static TemporaryDirectory of(BuildContext context) {
+    final TemporaryDirectory? result = maybeOf(context);
+    assert(result != null, 'No TemporaryDirectory found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return true;
+  }
+}

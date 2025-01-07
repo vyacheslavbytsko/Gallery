@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'fragments/library_fragment.dart';
-import 'fragments/search_fragment.dart';
-import 'fragments/timeline_fragment.dart';
-import 'fragments/tools_fragment.dart';
+import 'library_fragment.dart';
+import 'search_fragment.dart';
+import 'timeline_fragment.dart';
+import 'tools_fragment.dart';
 
 StatefulShellRoute homeScreenRoute = StatefulShellRoute.indexedStack(
     builder: (BuildContext context, GoRouterState state,
@@ -17,81 +17,90 @@ StatefulShellRoute homeScreenRoute = StatefulShellRoute.indexedStack(
             destinations[index].fragment, destinations[index].path)));
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.navigationShell});
-
   final StatefulNavigationShell navigationShell;
 
+  const HomeScreen({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery.orientationOf(context) ==
-            Orientation.portrait // нормальное положение
-        ? Scaffold(
-            body: navigationShell,
-            bottomNavigationBar: NavigationBar(
-                backgroundColor: ElevationOverlay.applySurfaceTint(
-                    Theme.of(context).colorScheme.surface,
-                    Theme.of(context).colorScheme.surfaceTint,
-                    3),
-                onDestinationSelected: (int index) => _onTap(context, index),
-                selectedIndex: navigationShell.currentIndex,
-                destinations: List.generate(
-                    destinations.length,
-                    (index) => NavigationDestination(
-                        icon: destinations[index].icon,
-                        label: destinations[index].label,
-                        selectedIcon: destinations[index].selectedIcon))))
-        : Scaffold(
-            // ютуб-положение
-            body: Row(
-              children: [
-                Stack(
+    if(MediaQuery.orientationOf(context) == Orientation.portrait) {
+      return Scaffold(
+        body: navigationShell,
+        bottomNavigationBar: NavigationBar(
+            backgroundColor: ElevationOverlay.applySurfaceTint(
+                Theme.of(context).colorScheme.surface,
+                Theme.of(context).colorScheme.surfaceTint,
+                3),
+            onDestinationSelected: (int index) => _onTap(context, index),
+            selectedIndex: navigationShell.currentIndex,
+            destinations: List.generate(
+                destinations.length, (index) => NavigationDestination(
+                    icon: destinations[index].icon,
+                    label: destinations[index].label,
+                    selectedIcon: destinations[index].selectedIcon
+                )
+            )
+        ),
+      );
+    } else {
+      return Scaffold(
+        body: Row(
+          children: [
+            Stack(
+                children: [
+                  Column(
                     children: [
-                      Column(
-                        children: [
-                          SizedBox(height: kToolbarHeight,),
-                          Flexible(
-                            fit: FlexFit.tight,
-                            child: NavigationRail(
-                              backgroundColor: ElevationOverlay.applySurfaceTint(
-                                  Theme.of(context).colorScheme.surface,
-                                  Theme.of(context).colorScheme.surfaceTint,
-                                  3),
-                              labelType: NavigationRailLabelType.selected,
-                              selectedIndex: navigationShell.currentIndex,
-                              onDestinationSelected: (int index) =>
-                                  _onTap(context, index),
-                              destinations: List.generate(
-                                destinations.length,
-                                    (index) => NavigationRailDestination(
-                                  icon: destinations[index].icon,
-                                  label: Text(destinations[index].label),
-                                  selectedIcon: destinations[index].selectedIcon,
-                                ),
-                              ),
+                      const SizedBox(height: kToolbarHeight,),
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: NavigationRail(
+                          backgroundColor: ElevationOverlay.applySurfaceTint(
+                              Theme.of(context).colorScheme.surface,
+                              Theme.of(context).colorScheme.surfaceTint,
+                              3),
+                          labelType: NavigationRailLabelType.selected,
+                          selectedIndex: navigationShell.currentIndex,
+                          onDestinationSelected: (int index) =>
+                              _onTap(context, index),
+                          destinations: List.generate(
+                            destinations.length,
+                                (index) => NavigationRailDestination(
+                              icon: destinations[index].icon,
+                              label: Text(destinations[index].label),
+                              selectedIcon: destinations[index].selectedIcon,
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                      Container(
-                        color: ElevationOverlay.applySurfaceTint(
-                            Theme.of(context).colorScheme.surface,
-                            Theme.of(context).colorScheme.surfaceTint,
-                            3),
-                        height:
-                        MediaQuery.of(context).padding.top + kToolbarHeight,
-                        width: MediaQuery.of(context).padding.left + 80,
-                        child: Padding(
-                            padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).padding.top, left: MediaQuery.of(context).padding.left),
-                            child: const Icon(Icons.landscape)),
-                      ),
-                    ]
-                ),
-                Expanded(child: SafeArea(top: false, bottom: false, left: false, right: true, child: navigationShell))
-              ],
+                    ],
+                  ),
+                  Container(
+                    color: ElevationOverlay.applySurfaceTint(
+                        Theme.of(context).colorScheme.surface,
+                        Theme.of(context).colorScheme.surfaceTint,
+                        3),
+                    height: MediaQuery.of(context).padding.top + kToolbarHeight,
+                    width: MediaQuery.of(context).padding.left + 80,
+                    child: Padding(
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).padding.top, left: MediaQuery.of(context).padding.left),
+                        child: const Icon(Icons.landscape)),
+                  ),
+                ]
             ),
-          );
+            Expanded(
+                child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    left: false,
+                    right: false,
+                    child: navigationShell
+                )
+            )
+          ],
+        ),
+      );
+    }
   }
 
   void _onTap(BuildContext context, int index) {
@@ -139,7 +148,7 @@ class Destination {
 
 List<Destination> destinations = const [
   Destination("Timeline", Icon(Icons.photo_outlined), Icon(Icons.photo),
-      "/timeline", HomeScreenTimelineFragment()),
+      "/", HomeScreenTimelineFragment()),
   Destination("Library", Icon(Icons.perm_media_outlined),
       Icon(Icons.perm_media), "/library", HomeScreenLibraryFragment()),
   Destination("Search", Icon(Icons.search_outlined), Icon(Icons.search),
@@ -147,3 +156,47 @@ List<Destination> destinations = const [
   Destination("Tools", Icon(Icons.handyman_outlined), Icon(Icons.handyman),
       "/tools", HomeScreenToolsFragment())
 ];
+
+class HomeFragment extends StatelessWidget {
+  final Widget? appBar;
+  final Widget? body;
+  final bool controlSafeArea;
+
+  const HomeFragment({super.key, this.appBar, this.body, this.controlSafeArea = true});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar != null ? PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: MediaQuery.removePadding(
+          context: context,
+          removeLeft: true,
+          child: appBar!
+        ),
+      ) : null,
+      body: controlSafeArea ? SafeArea(
+        top: false,
+        left: false,
+        right: true,
+        bottom: false,
+        child: body != null ? MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            removeBottom: true,
+            removeRight: true,
+            removeLeft: true,
+            child: body != null ? body! : const SizedBox.shrink()
+        ) : const SizedBox.shrink()
+      ) : MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          removeBottom: true,
+          removeRight: true,
+          removeLeft: true,
+          child: body != null ? body! : const SizedBox.shrink()
+      )
+    );
+  }
+
+}
