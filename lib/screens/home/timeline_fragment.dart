@@ -60,353 +60,358 @@ class _HomeScreenTimelineFragmentState extends State<HomeScreenTimelineFragment>
                 ),
               ],
             ),
-            ListenableBuilder(
-              listenable: timelineChangeNotifier,
-              builder: (BuildContext context, Widget? child) {
-                /*return SliverList(
-                  delegate: SliverChildListDelegate([]),
-                );*/
-                return FutureBuilder(
-                  future: mediaBox.getShownMediaSortedAsync(),
-                  initialData: const [],
-                  builder: (context, snapshot) {
-                    List<Widget> localItems = <Widget>[];
-                    if (snapshot.hasData) {
-                      for (MediaV1 item in snapshot.data!) {
-                        try {
-                          //localItems.add(Text("${item.name} ${item.date}", style: const TextStyle(fontSize: 12),));
-                          localItems.add(Image.memory(
-                            File("${TemporaryDirectory.of(context).temp.path}/thumbnails/${item.id}.jpg").readAsBytesSync(),
-                            fit: BoxFit.cover,));
-                        } catch (e) {
-                          localItems.add(
-                              Text("error ${item.name} ${item.date}"));
-                        }
-                      }
-                    }
-                    return SliverSafeArea(
-                      right: true,
-                      top: false,
-                      left: false,
-                      bottom: false,
-                      sliver: SliverList(
-                          delegate: SliverChildListDelegate(
-                              flatten([
-                                Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Card(
-                                    margin: EdgeInsets.zero,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(32)
-                                    ),
-                                    color: ElevationOverlay.applySurfaceTint(
-                                        Theme
-                                            .of(context)
-                                            .colorScheme
-                                            .surface,
-                                        Theme
-                                            .of(context)
-                                            .colorScheme
-                                            .surfaceTint,
-                                        3
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .stretch,
-                                      children: [
-                                        Card(
-                                            margin: EdgeInsets.zero,
-                                            elevation: 0,
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(32),
-                                                  topRight: Radius.circular(32),
-                                                )
-                                            ),
+            SliverSafeArea(
+              right: true,
+              top: false,
+              left: false,
+              bottom: false,
+              sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32)
+                        ),
+                        color: ElevationOverlay.applySurfaceTint(
+                            Theme
+                                .of(context)
+                                .colorScheme
+                                .surface,
+                            Theme
+                                .of(context)
+                                .colorScheme
+                                .surfaceTint,
+                            3
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .stretch,
+                          children: [
+                            Card(
+                                margin: EdgeInsets.zero,
+                                elevation: 0,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(32),
+                                      topRight: Radius.circular(32),
+                                    )
+                                ),
+                                color: Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .primary,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(
+                                      16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              IconButton.filled(
+                                                  onPressed: null,
+                                                  icon: Icon(
+                                                    Icons.landscape,
+                                                    color: Theme
+                                                        .of(context)
+                                                        .colorScheme
+                                                        .onPrimary,
+                                                  )),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            width: 16,),
+                                          Text.rich(
+                                              const TextSpan(
+                                                  text: "Welcome!"
+                                              ),
+                                              style: Theme
+                                                  .of(context)
+                                                  .textTheme
+                                                  .titleLarge
+                                                  ?.copyWith(
+                                                color: Theme
+                                                    .of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                              )
+                                          ),
+                                          const SizedBox(
+                                            width: 16,),
+                                          IconButton(
+                                            tooltip: "Hide suggestions",
+                                            icon: const Icon(
+                                                Icons.close),
+                                            onPressed: () => {},
                                             color: Theme
                                                 .of(context)
                                                 .colorScheme
-                                                .primary,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(
-                                                  16.0),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment
-                                                        .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          IconButton.filled(
-                                                              onPressed: null,
-                                                              icon: Icon(
-                                                                Icons.landscape,
-                                                                color: Theme
-                                                                    .of(context)
-                                                                    .colorScheme
-                                                                    .onPrimary,
-                                                              )),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 16,),
-                                                      Text.rich(
-                                                          const TextSpan(
-                                                              text: "Welcome!"
-                                                          ),
-                                                          style: Theme
-                                                              .of(context)
-                                                              .textTheme
-                                                              .titleLarge
-                                                              ?.copyWith(
-                                                              color: Theme
-                                                                  .of(context)
-                                                                  .colorScheme
-                                                                  .onPrimary,
-                                                          )
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 16,),
-                                                      IconButton(
-                                                        tooltip: "Hide suggestions",
-                                                        icon: const Icon(
-                                                            Icons.close),
-                                                        onPressed: () => {},
-                                                        color: Theme
-                                                            .of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 4,
-                                                        vertical: 12),
-                                                    child: Text(
-                                                        "There are some things that need to be set up to ensure the best experience:",
-                                                        style: Theme
-                                                            .of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                            color: Theme
-                                                                .of(context)
-                                                                .colorScheme
-                                                                .onPrimary
-                                                        ),
-                                                        textAlign: TextAlign
-                                                            .start),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                        ),
-                                        WavyDivider(
-                                          color: ElevationOverlay
-                                              .applySurfaceTint(
-                                              Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .surface,
-                                              Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .surfaceTint,
-                                              0
-                                          ),
-                                          height: 2,
-                                          wavelength: 32,
-                                          width: 4,
-                                        ),
-                                        Padding(
-                                            padding: const EdgeInsets.all(16),
-                                            child: Row(
-                                              key: const Key("suggestions"),
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .spaceBetween,
-                                              children: [
-                                                IconButton.filled(
-                                                  onPressed: null,
-                                                  icon: const Icon(Icons
-                                                      .photo_library_outlined),
-                                                  disabledColor: Theme
-                                                      .of(context)
-                                                      .colorScheme
-                                                      .onSurface,
-                                                ),
-                                                /*Padding(
+                                                .onPrimary,
+                                          )
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets
+                                            .symmetric(
+                                            horizontal: 4,
+                                            vertical: 12),
+                                        child: Text(
+                                            "There are some things that need to be set up to ensure the best experience:",
+                                            style: Theme
+                                                .of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                color: Theme
+                                                    .of(context)
+                                                    .colorScheme
+                                                    .onPrimary
+                                            ),
+                                            textAlign: TextAlign
+                                                .start),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                            ),
+                            WavyDivider(
+                              color: ElevationOverlay
+                                  .applySurfaceTint(
+                                  Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .surface,
+                                  Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .surfaceTint,
+                                  0
+                              ),
+                              height: 2,
+                              wavelength: 32,
+                              width: 4,
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  key: const Key("suggestions"),
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    IconButton.filled(
+                                      onPressed: null,
+                                      icon: const Icon(Icons
+                                          .photo_library_outlined),
+                                      disabledColor: Theme
+                                          .of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                    /*Padding(
                                                   padding: const EdgeInsets.all(12.0),
                                                   child: Icon(Icons.photo_library_outlined, color: Theme.of(context).colorScheme.onSurface),
                                                 ),*/
-                                                const SizedBox(width: 16),
-                                                const Expanded(child: Text(
-                                                    "Give access to your photos and videos",
-                                                    softWrap: true)),
-                                                const SizedBox(width: 4),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment
-                                                      .end,
-                                                  children: [
-                                                    IconButton(icon: const Icon(
-                                                        Icons.close),
-                                                        onPressed: () =>
-                                                        {
-                                                        } /*setState(() => suggestions.remove("account"))*/),
-                                                    const SizedBox(width: 4),
-                                                    IconButton.filled(
-                                                        onPressed: () => {},
-                                                        icon: const Icon(Icons
-                                                            .navigate_next))
-                                                  ],
-                                                )
-                                              ],
-                                            )
-                                        ),
-                                        Container(
-                                          color: ElevationOverlay
-                                              .applySurfaceTint(
-                                              Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .surface,
-                                              Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .surfaceTint,
-                                              0
-                                          ),
-                                          width: double.infinity,
-                                          height: 4,
-                                        ),
-                                        Padding(
-                                            padding: const EdgeInsets.all(16),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .spaceBetween,
-                                              children: [
-                                                IconButton.filled(
-                                                  onPressed: null,
-                                                  icon: const Icon(
-                                                      Icons.visibility_outlined),
-                                                  disabledColor: Theme
-                                                      .of(context)
-                                                      .colorScheme
-                                                      .onSurface,
-                                                ),
-                                                const SizedBox(width: 16),
-                                                const Expanded(child: Text(
-                                                    "Choose which folders to show in timeline",
-                                                    softWrap: true)),
-                                                const SizedBox(width: 4),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment
-                                                      .end,
-                                                  children: [
-                                                    IconButton(icon: const Icon(
-                                                        Icons.close),
-                                                        onPressed: () =>
-                                                        {
-                                                        } /*setState(() => suggestions.remove("account"))*/),
-                                                    const SizedBox(width: 4),
-                                                    IconButton.filled(
-                                                        onPressed: () => {},
-                                                        icon: const Icon(Icons
-                                                            .navigate_next))
-                                                  ],
-                                                )
-                                              ],
-                                            )
-                                        ),
-                                        Container(
-                                          color: ElevationOverlay
-                                              .applySurfaceTint(
-                                              Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .surface,
-                                              Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .surfaceTint,
-                                              0
-                                          ),
-                                          width: double.infinity,
-                                          height: 4,
-                                        ),
-                                        Padding(
-                                            padding: const EdgeInsets.all(16),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .spaceBetween,
-                                              children: [
-                                                IconButton.filled(
-                                                  onPressed: null,
-                                                  icon: const Icon(
-                                                      Icons.cloud_outlined),
-                                                  disabledColor: Theme
-                                                      .of(context)
-                                                      .colorScheme
-                                                      .onSurface,
-                                                ),
-                                                const SizedBox(width: 16),
-                                                const Expanded(child: Text(
-                                                    "Turn on media backup and synchronisation",
-                                                    softWrap: true)),
-                                                const SizedBox(width: 4),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment
-                                                      .end,
-                                                  children: [
-                                                    IconButton(icon: const Icon(
-                                                        Icons.close),
-                                                        onPressed: () =>
-                                                        {
-                                                        } /*setState(() => suggestions.remove("account"))*/),
-                                                    const SizedBox(width: 4),
-                                                    IconButton.filled(
-                                                        onPressed: () => {},
-                                                        icon: const Icon(Icons
-                                                            .navigate_next))
-                                                  ],
-                                                )
-                                              ],
-                                            )
-                                        ),
+                                    const SizedBox(width: 16),
+                                    const Expanded(child: Text(
+                                        "Give access to your photos and videos",
+                                        softWrap: true)),
+                                    const SizedBox(width: 4),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .end,
+                                      children: [
+                                        IconButton(icon: const Icon(
+                                            Icons.close),
+                                            onPressed: () =>
+                                            {
+                                            } /*setState(() => suggestions.remove("account"))*/),
+                                        const SizedBox(width: 4),
+                                        IconButton.filled(
+                                            onPressed: () => {},
+                                            icon: const Icon(Icons
+                                                .navigate_next))
                                       ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8,),
-                                DynamicGridView(
-                                    maxWidthOnPortrait: 100,
-                                    maxWidthOnLandscape: 150,
-                                    sliver: false,
-                                    spaceBetween: 2,
-                                    children: List.generate(
-                                        localItems.length, (index) =>
-                                        Container(
-                                            color: Color.fromARGB(
-                                                255, Random().nextInt(255),
-                                                Random.secure().nextInt(255),
-                                                Random().nextInt(255)
-                                            ),
-                                            child: localItems[index]
-                                        )
                                     )
+                                  ],
                                 )
-                              ])
-                          )
+                            ),
+                            Container(
+                              color: ElevationOverlay
+                                  .applySurfaceTint(
+                                  Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .surface,
+                                  Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .surfaceTint,
+                                  0
+                              ),
+                              width: double.infinity,
+                              height: 4,
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    IconButton.filled(
+                                      onPressed: null,
+                                      icon: const Icon(
+                                          Icons.visibility_outlined),
+                                      disabledColor: Theme
+                                          .of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                    const SizedBox(width: 16),
+                                    const Expanded(child: Text(
+                                        "Choose which folders to show in timeline",
+                                        softWrap: true)),
+                                    const SizedBox(width: 4),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .end,
+                                      children: [
+                                        IconButton(icon: const Icon(
+                                            Icons.close),
+                                            onPressed: () =>
+                                            {
+                                            } /*setState(() => suggestions.remove("account"))*/),
+                                        const SizedBox(width: 4),
+                                        IconButton.filled(
+                                            onPressed: () => {},
+                                            icon: const Icon(Icons
+                                                .navigate_next))
+                                      ],
+                                    )
+                                  ],
+                                )
+                            ),
+                            Container(
+                              color: ElevationOverlay
+                                  .applySurfaceTint(
+                                  Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .surface,
+                                  Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .surfaceTint,
+                                  0
+                              ),
+                              width: double.infinity,
+                              height: 4,
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    IconButton.filled(
+                                      onPressed: null,
+                                      icon: const Icon(
+                                          Icons.cloud_outlined),
+                                      disabledColor: Theme
+                                          .of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                    const SizedBox(width: 16),
+                                    const Expanded(child: Text(
+                                        "Turn on media backup and synchronisation",
+                                        softWrap: true)),
+                                    const SizedBox(width: 4),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .end,
+                                      children: [
+                                        IconButton(icon: const Icon(
+                                            Icons.close),
+                                            onPressed: () =>
+                                            {
+                                            } /*setState(() => suggestions.remove("account"))*/),
+                                        const SizedBox(width: 4),
+                                        IconButton.filled(
+                                            onPressed: () => {},
+                                            icon: const Icon(Icons
+                                                .navigate_next))
+                                      ],
+                                    )
+                                  ],
+                                )
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                );
-              },
+                    ),
+                  ])
+              )
+            ),
+            SliverSafeArea(
+              right: true,
+              top: false,
+              left: false,
+              bottom: false,
+              sliver: ListenableBuilder(
+                listenable: timelineChangeNotifier,
+                builder: (BuildContext context, Widget? child) {
+                  return FutureBuilder(
+                    future: mediaBox.getShownMediaSortedAsync(),
+                    initialData: const [],
+                    builder: (context, snapshot) {
+                      late List<MediaV1> media;
+                      if(snapshot.hasData) {
+                        media = snapshot.requireData.cast<MediaV1>();
+                      } else {
+                        media = [];
+                      }
+                      return DynamicGridBuilderView(
+                        itemCount: snapshot.requireData.length,
+                        maxWidthOnPortrait: 100,
+                        maxWidthOnLandscape: 150,
+                        sliver: true,
+                        spaceBetween: 2,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            color: Color.fromARGB(
+                                255, Random().nextInt(255),
+                                Random.secure().nextInt(255),
+                                Random().nextInt(255)
+                            ),
+                            child: FutureBuilder(
+                                future: media[index].ensureThumbnail(tempDir: TemporaryDirectory.of(context).temp),
+                                builder: (context, snapshot) {
+                                  if(snapshot.hasData) {
+                                    return Image.memory(
+                                        File("${TemporaryDirectory.of(context).temp.path}/thumbnails/${media[index].id}.jpg").readAsBytesSync(),
+                                        fit: BoxFit.cover);
+                                  } else if(snapshot.hasError) {
+                                    return Text("error ${media[index].name} ${media[index].date}");
+                                  } else {
+                                    return Text("loading ${media[index].name} ${media[index].date}");
+                                  }
+                                }
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             )
           ],
         ),

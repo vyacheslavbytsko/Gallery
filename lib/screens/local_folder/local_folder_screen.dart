@@ -93,47 +93,58 @@ class _LocalFolderScreenState extends State<LocalFolderScreen> {
                 const SizedBox(height: 8,),
               ]),
             ),
-            ListenableBuilder(
+            SliverSafeArea(
+              right: true,
+              top: false,
+              left: false,
+              bottom: false,
+              sliver: ListenableBuilder(
                 listenable: timelineChangeNotifier,
                 builder: (BuildContext context, Widget? child) {
                   return FutureBuilder(
-                      future: mediaBox.getLocalFolderMediaAsync(widget.localFolder),
-                      initialData: [],
-                      builder: (context, snapshot) {
-                        List<Widget> localItems = <Widget>[];
-                        if (snapshot.hasData) {
-                          for (MediaV1 item in snapshot.data!) {
-                            try {
-                              //localItems.add(Text("${item.name} ${item.date}", style: const TextStyle(fontSize: 12),));
-                              localItems.add(Image.memory(
-                              File("${TemporaryDirectory.of(context).temp.path}/thumbnails/${item.id}.jpg").readAsBytesSync(),
-                              fit: BoxFit.cover,));
-                            } catch (e) {
-                              localItems.add(
-                                  Text("error ${item.name} ${item.date}"));
-                            }
-                          }
-                        }
-                        return DynamicGridView(
-                            maxWidthOnPortrait: 100,
-                            maxWidthOnLandscape: 150,
-                            sliver: true,
-                            spaceBetween: 2,
-                            children: List.generate(
-                                localItems.length, (index) =>
-                                Container(
-                                    color: Color.fromARGB(
-                                        255, Random().nextInt(255),
-                                        Random.secure().nextInt(255),
-                                        Random().nextInt(255)
-                                    ),
-                                    child: localItems[index]
-                                )
-                            )
-                        );
+                    future: mediaBox.getLocalFolderMediaSortedAsync(widget.localFolder),
+                    initialData: const [],
+                    builder: (context, snapshot) {
+                      late List<MediaV1> media;
+                      if(snapshot.hasData) {
+                        media = snapshot.requireData.cast<MediaV1>();
+                      } else {
+                        media = [];
                       }
+                      return DynamicGridBuilderView(
+                        itemCount: snapshot.requireData.length,
+                        maxWidthOnPortrait: 100,
+                        maxWidthOnLandscape: 150,
+                        sliver: true,
+                        spaceBetween: 2,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            color: Color.fromARGB(
+                                255, Random().nextInt(255),
+                                Random.secure().nextInt(255),
+                                Random().nextInt(255)
+                            ),
+                            child: FutureBuilder(
+                                future: media[index].ensureThumbnail(tempDir: TemporaryDirectory.of(context).temp),
+                                builder: (context, snapshot) {
+                                  if(snapshot.hasData) {
+                                    return Image.memory(
+                                        File("${TemporaryDirectory.of(context).temp.path}/thumbnails/${media[index].id}.jpg").readAsBytesSync(),
+                                        fit: BoxFit.cover);
+                                  } else if(snapshot.hasError) {
+                                    return Text("error ${media[index].name} ${media[index].date}");
+                                  } else {
+                                    return Text("loading ${media[index].name} ${media[index].date}");
+                                  }
+                                }
+                            ),
+                          );
+                        },
+                      );
+                    },
                   );
-                }
+                },
+              ),
             ),
             SliverSafeArea(bottom: true, sliver: SliverList(delegate: SliverChildListDelegate([const SizedBox(height: 8)])))
           ],

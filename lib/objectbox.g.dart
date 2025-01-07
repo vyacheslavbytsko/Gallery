@@ -57,7 +57,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(4, 522788543480063592),
       name: 'MediaV1',
-      lastPropertyId: const obx_int.IdUid(11, 3715698149547649912),
+      lastPropertyId: const obx_int.IdUid(14, 3997914637433160222),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -110,6 +110,21 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(11, 3715698149547649912),
             name: 'localModifiedAt',
             type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 6511553332277344167),
+            name: 'localTypeInt',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 3620103456044419760),
+            name: 'height',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(14, 3997914637433160222),
+            name: 'width',
+            type: 6,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -235,7 +250,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final localFolderIdOffset = object.localFolderId == null
               ? null
               : fbb.writeString(object.localFolderId!);
-          fbb.startTable(12);
+          fbb.startTable(15);
           fbb.addInt64(0, object.objectBoxId);
           fbb.addOffset(1, idOffset);
           fbb.addOffset(2, localIdOffset);
@@ -246,6 +261,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addBool(8, object.synced);
           fbb.addBool(9, object.show);
           fbb.addInt64(10, object.localModifiedAt?.millisecondsSinceEpoch);
+          fbb.addInt64(11, object.localTypeInt);
+          fbb.addInt64(12, object.height);
+          fbb.addInt64(13, object.width);
           fbb.finish(fbb.endTable());
           return object.objectBoxId;
         },
@@ -270,6 +288,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGet(buffer, rootOffset, 10, '');
           final typeParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 12, '');
+          final localTypeIntParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 26);
+          final heightParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 28, 0);
+          final widthParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 30, 0);
           final dateParam = DateTime.fromMillisecondsSinceEpoch(
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0));
           final showParam =
@@ -284,6 +308,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
               localModifiedAt: localModifiedAtParam,
               name: nameParam,
               type: typeParam,
+              localTypeInt: localTypeIntParam,
+              height: heightParam,
+              width: widthParam,
               date: dateParam,
               show: showParam,
               synced: syncedParam);
@@ -359,4 +386,16 @@ class MediaV1_ {
   /// See [MediaV1.localModifiedAt].
   static final localModifiedAt =
       obx.QueryDateProperty<MediaV1>(_entities[1].properties[9]);
+
+  /// See [MediaV1.localTypeInt].
+  static final localTypeInt =
+      obx.QueryIntegerProperty<MediaV1>(_entities[1].properties[10]);
+
+  /// See [MediaV1.height].
+  static final height =
+      obx.QueryIntegerProperty<MediaV1>(_entities[1].properties[11]);
+
+  /// See [MediaV1.width].
+  static final width =
+      obx.QueryIntegerProperty<MediaV1>(_entities[1].properties[12]);
 }

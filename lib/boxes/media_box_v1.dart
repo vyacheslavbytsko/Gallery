@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:objectbox/objectbox.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import '../objectbox.g.dart';
 
@@ -42,6 +46,7 @@ class MediaBox {
   Future<LocalFolderV1?> getLocalFolderAsync(String id) => (_localFoldersBox.query(LocalFolderV1_.id.equals(id))).build().findFirstAsync();
   LocalFolderV1? getLocalFolder(String id) => (_localFoldersBox.query(LocalFolderV1_.id.equals(id))).build().findFirst();
   Future<List<MediaV1>> getLocalFolderMediaAsync(LocalFolderV1 folder) => (_mediaBox.query(MediaV1_.localFolderId.equals(folder.id))).build().findAsync();
+  Future<List<MediaV1>> getLocalFolderMediaSortedAsync(LocalFolderV1 folder) => (_mediaBox.query(MediaV1_.localFolderId.equals(folder.id))..order(MediaV1_.date, flags: Order.descending)).build().findAsync();
 
   Future<List<MediaV1>> getLocalMediaAsync() => _localMediaSyncedIsNull.findAsync();
   Future<List<MediaV1>> getLocalSyncedMediaAsync() => _localMediaSyncedIsTrue.findAsync();
@@ -86,15 +91,30 @@ class MediaV1 {
   DateTime? localModifiedAt;
   String name;
   String type;
+  int? localTypeInt;
+  int height;
+  int width;
   @Property(type: PropertyType.date)
   DateTime date;
   bool show;
   bool synced;
 
-  MediaV1({this.objectBoxId = 0, required this.id, required this.localId, required this.localFolderId, required this.localModifiedAt, required this.name, required this.type, required this.date, required this.show, required this.synced/*, required this.modifiedAt*/});
+  MediaV1({this.objectBoxId = 0, required this.id, required this.localId, required this.localFolderId, required this.localModifiedAt, required this.name, required this.type, required this.localTypeInt, required this.height, required this.width, required this.date, required this.show, required this.synced/*, required this.modifiedAt*/});
 
   @override
   String toString() {
     return "MediaV1($id, $localId)";
+  }
+
+  Future<bool> ensureThumbnail({Directory? tempDir}) async {
+    File dbFolderAssetThumbnailFile = File("${(tempDir ?? await getTemporaryDirectory()).path}/thumbnails/$id.jpg");
+    if(dbFolderAssetThumbnailFile.existsSync()) return true;
+    AssetEntity asset = AssetEntity(id: localId!, typeInt: localTypeInt!, width: width, height: height);
+    Uint8List thumbnail = (await asset.thumbnailDataWithSize(const ThumbnailSize.square(256), quality: 75))!;
+    dbFolderAssetThumbnailFile
+        .createSync(recursive: true);
+    dbFolderAssetThumbnailFile
+        .writeAsBytesSync(thumbnail.buffer.asUint8List(thumbnail.offsetInBytes, thumbnail.lengthInBytes));
+    return true;
   }
 }

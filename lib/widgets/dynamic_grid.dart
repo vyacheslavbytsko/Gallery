@@ -11,8 +11,8 @@ class DynamicGridViewHeight {
   const DynamicGridViewHeight.add(double height) : type = 2, value = height;
 }
 
-class DynamicGridView extends StatelessWidget {
-  const DynamicGridView({super.key, required this.maxWidthOnPortrait, required this.maxWidthOnLandscape, this.spaceBetween = 0, required this.sliver, required this.children, this.height = const DynamicGridViewHeight.ratio(1)});
+class DynamicGridCountView extends StatelessWidget {
+  const DynamicGridCountView({super.key, required this.maxWidthOnPortrait, required this.maxWidthOnLandscape, this.spaceBetween = 0, required this.sliver, required this.children, this.height = const DynamicGridViewHeight.ratio(1)});
 
   final List<Widget> children;
   final int maxWidthOnPortrait;
@@ -52,5 +52,55 @@ class DynamicGridView extends StatelessWidget {
         crossAxisCount: max(1, MediaQuery.of(context).size.width ~/ maxWidth),
         children: children
     );
+  }
+}
+
+class DynamicGridBuilderView extends StatelessWidget {
+  final int maxWidthOnPortrait;
+  final int maxWidthOnLandscape;
+  final double spaceBetween;
+  final bool sliver;
+  final DynamicGridViewHeight height;
+  final NullableIndexedWidgetBuilder itemBuilder;
+  final int itemCount;
+
+  DynamicGridBuilderView({super.key, required this.maxWidthOnPortrait, required this.maxWidthOnLandscape, required this.spaceBetween, required this.sliver, this.height = const DynamicGridViewHeight.ratio(1), required this.itemCount, required this.itemBuilder});
+
+  @override
+  Widget build(BuildContext context) {
+    int maxWidth = MediaQuery.of(context).orientation == Orientation.portrait ? maxWidthOnPortrait : maxWidthOnLandscape;
+    double aspectRatio = 1.0;
+    switch(height.type) {
+      case 0:
+        aspectRatio = height.value;
+        break;
+      case 1:
+        aspectRatio = (MediaQuery.of(context).size.width / max(1, MediaQuery.of(context).size.width ~/ maxWidth)) / height.value;
+        break;
+      case 2:
+        aspectRatio = (MediaQuery.of(context).size.width / max(1, MediaQuery.of(context).size.width ~/ maxWidth)) / (MediaQuery.of(context).size.width / max(1, MediaQuery.of(context).size.width ~/ maxWidth) + height.value);
+        break;
+    }
+    return sliver ? SliverGrid.builder(
+        itemCount: itemCount,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            childAspectRatio: aspectRatio,
+            mainAxisSpacing: spaceBetween,
+            crossAxisSpacing: spaceBetween,
+            crossAxisCount: max(1, MediaQuery.of(context).size.width ~/ maxWidth)
+        ),
+        itemBuilder: itemBuilder
+    ) : GridView.builder(
+        itemCount: itemCount,
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            childAspectRatio: aspectRatio,
+            mainAxisSpacing: spaceBetween,
+            crossAxisSpacing: spaceBetween,
+            crossAxisCount: max(1, MediaQuery.of(context).size.width ~/ maxWidth)
+        ),
+        itemBuilder: itemBuilder);
   }
 }

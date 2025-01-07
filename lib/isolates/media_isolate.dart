@@ -124,14 +124,7 @@ class MediaIsolate extends IsolateHandler {
               List<MediaV1> toAdd = [];
               List<MediaV1> toHide = [];
               List<MediaV1> toShow = [];
-              //bool fllllaaaggg = false;
               for(var pmFolderAsset in pmFolderAssets) {
-                /*if(!fllllaaaggg) {
-                  print(await pmFolderAsset.file);
-                  print(await pmFolderAsset.originFileWithSubtype);
-                  print(await (await pmFolderAsset.originFileWithSubtype)?.length());
-                  fllllaaaggg = true;
-                }*/
                 try {
                   // get corresponding db asset
                   MediaV1 dbFolderAsset = dbAssets.firstWhere((
@@ -168,16 +161,14 @@ class MediaIsolate extends IsolateHandler {
                       type: pmFolderAsset.type == AssetType.image
                           ? "image"
                           : "video",
+                      localTypeInt: pmFolderAsset.typeInt,
+                      height: pmFolderAsset.height,
+                      width: pmFolderAsset.width,
                       date: pmFolderAsset.modifiedDateTime,
                       show: dbFolder.show,
                       synced: false
                   );
 
-                  Uint8List dbFolderAssetThumbnail = (await pmFolderAsset.thumbnailDataWithSize(const ThumbnailSize.square(256), quality: 75))!;
-                  Directory tempDir = await getTemporaryDirectory();
-                  File dbFolderAssetThumbnailFile = File("${tempDir.path}/thumbnails/${dbFolderAsset.id}.jpg")
-                    ..createSync(recursive: true)
-                    ..writeAsBytesSync(dbFolderAssetThumbnail.buffer.asUint8List(dbFolderAssetThumbnail.offsetInBytes, dbFolderAssetThumbnail.lengthInBytes));
                   //print("new. $dbFolderAsset $pmFolderAsset");
                   toAdd.add(dbFolderAsset);
                   //await mediaBox.addMediaAsync(dbFolderAsset);

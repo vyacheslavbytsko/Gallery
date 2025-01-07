@@ -41,7 +41,7 @@
     },
     {
       "id": "4:522788543480063592",
-      "lastPropertyId": "11:3715698149547649912",
+      "lastPropertyId": "14:3997914637433160222",
       "name": "MediaV1",
       "properties": [
         {
@@ -96,6 +96,21 @@
           "id": "11:3715698149547649912",
           "name": "localModifiedAt",
           "type": 10
+        },
+        {
+          "id": "12:6511553332277344167",
+          "name": "localTypeInt",
+          "type": 6
+        },
+        {
+          "id": "13:3620103456044419760",
+          "name": "height",
+          "type": 6
+        },
+        {
+          "id": "14:3997914637433160222",
+          "name": "width",
+          "type": 6
         }
       ],
       "relations": []
