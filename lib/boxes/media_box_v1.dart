@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -6,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../misc.dart';
 import '../objectbox.g.dart';
 
 class MediaBox {
@@ -17,6 +19,7 @@ class MediaBox {
   late final Query<MediaV1> _localMediaSyncedIsFalse;
   late final Query<MediaV1> _mediaSorted;
   late final Query<MediaV1> _shownMediaSorted;
+  late final Query<MediaV1> _localFolderMediaSorted;
 
   MediaBox._create(this._store) {
     _mediaBox = Box<MediaV1>(_store);
@@ -26,6 +29,7 @@ class MediaBox {
     _localMediaSyncedIsTrue = (_mediaBox.query(MediaV1_.localId.notNull().and(MediaV1_.synced.equals(true)))).build();
     _mediaSorted = (_mediaBox.query()..order(MediaV1_.date, flags: Order.descending)).build();
     _shownMediaSorted = (_mediaBox.query(MediaV1_.show.equals(true))..order(MediaV1_.date, flags: Order.descending)).build();
+    _localFolderMediaSorted = (_mediaBox.query(MediaV1_.localFolderId.equals(""))..order(MediaV1_.date, flags: Order.descending)).build();
   }
 
   static Future<MediaBox> create() async {
@@ -46,13 +50,36 @@ class MediaBox {
   Future<LocalFolderV1?> getLocalFolderAsync(String id) => (_localFoldersBox.query(LocalFolderV1_.id.equals(id))).build().findFirstAsync();
   LocalFolderV1? getLocalFolder(String id) => (_localFoldersBox.query(LocalFolderV1_.id.equals(id))).build().findFirst();
   Future<List<MediaV1>> getLocalFolderMediaAsync(LocalFolderV1 folder) => (_mediaBox.query(MediaV1_.localFolderId.equals(folder.id))).build().findAsync();
-  Future<List<MediaV1>> getLocalFolderMediaSortedAsync(LocalFolderV1 folder) => (_mediaBox.query(MediaV1_.localFolderId.equals(folder.id))..order(MediaV1_.date, flags: Order.descending)).build().findAsync();
+  Future<List<MediaV1>> getLocalFolderMediaSortedAsync(LocalFolderV1 folder) => (_localFolderMediaSorted..param(MediaV1_.localFolderId).value = folder.id).findAsync();
+
+  Future<LinkedHashMap<String, List<MediaV1>>> getLocalFolderMediaDatedAsync(LocalFolderV1 folder) async {
+    LinkedHashMap<String, List<MediaV1>> dates = LinkedHashMap();
+    await for(MediaV1 asset in (_localFolderMediaSorted..param(MediaV1_.localFolderId).value = folder.id).stream()) {
+      String formattedDate = internalFormatter.format(asset.date);
+      if(!dates.containsKey(formattedDate)) {
+        dates[formattedDate] = [];
+      }
+      dates[formattedDate]!.add(asset);
+    }
+    return dates;
+  }
 
   Future<List<MediaV1>> getLocalMediaAsync() => _localMediaSyncedIsNull.findAsync();
   Future<List<MediaV1>> getLocalSyncedMediaAsync() => _localMediaSyncedIsTrue.findAsync();
   Future<List<MediaV1>> getLocalNotSyncedMediaAsync() => _localMediaSyncedIsFalse.findAsync();
   Future<List<MediaV1>> getMediaSortedAsync() => _mediaSorted.findAsync();
   Future<List<MediaV1>> getShownMediaSortedAsync() => _shownMediaSorted.findAsync();
+  Future<LinkedHashMap<String, List<MediaV1>>> getShownMediaDatedAsync() async {
+    LinkedHashMap<String, List<MediaV1>> dates = LinkedHashMap();
+    await for(MediaV1 asset in _shownMediaSorted.stream()) {
+      String formattedDate = internalFormatter.format(asset.date);
+      if(!dates.containsKey(formattedDate)) {
+        dates[formattedDate] = [];
+      }
+      dates[formattedDate]!.add(asset);
+    }
+    return dates;
+  }
   Future<void> addMediaAsync(MediaV1 media) => _mediaBox.putAsync(media, mode: PutMode.insert);
   Future<void> addManyMediaAsync(List<MediaV1> media) => _mediaBox.putManyAsync(media, mode: PutMode.insert);
   Future<void> removeMediaAsync(MediaV1 media) => _mediaBox.removeAsync(media.objectBoxId);
@@ -106,15 +133,40 @@ class MediaV1 {
     return "MediaV1($id, $localId)";
   }
 
-  Future<bool> ensureThumbnail({Directory? tempDir}) async {
+  Uint8List? getMemoizedThumbnail() {
+    while(thumbnailCache.length > 5000) {
+      String idToRemove = thumbnailCacheDate.firstKey()!;
+      thumbnailCache.remove(idToRemove);
+      thumbnailCacheDate.remove(idToRemove);
+    }
+    return thumbnailCache[id];
+  }
+
+  Future<Uint8List> getThumbnail({Directory? tempDir}) async {
+    while(thumbnailCache.length > 5000) {
+      String idToRemove = thumbnailCacheDate.firstKey()!;
+      thumbnailCache.remove(idToRemove);
+      thumbnailCacheDate.remove(idToRemove);
+    }
+    if(thumbnailCache.containsKey(id)) return thumbnailCache[id]!;
+
     File dbFolderAssetThumbnailFile = File("${(tempDir ?? await getTemporaryDirectory()).path}/thumbnails/$id.jpg");
-    if(dbFolderAssetThumbnailFile.existsSync()) return true;
-    AssetEntity asset = AssetEntity(id: localId!, typeInt: localTypeInt!, width: width, height: height);
-    Uint8List thumbnail = (await asset.thumbnailDataWithSize(const ThumbnailSize.square(256), quality: 75))!;
-    dbFolderAssetThumbnailFile
-        .createSync(recursive: true);
-    dbFolderAssetThumbnailFile
-        .writeAsBytesSync(thumbnail.buffer.asUint8List(thumbnail.offsetInBytes, thumbnail.lengthInBytes));
-    return true;
+
+    if(dbFolderAssetThumbnailFile.existsSync()) {
+      thumbnailCache[id] = await dbFolderAssetThumbnailFile.readAsBytes();
+      thumbnailCacheDate[id] = DateTime.now();
+      return getThumbnail(tempDir: tempDir);
+    } else {
+      AssetEntity asset = AssetEntity(id: localId!, typeInt: localTypeInt!, width: width, height: height);
+      Uint8List thumbnail = (await asset.thumbnailDataWithSize(const ThumbnailSize.square(256), quality: 75))!;
+      dbFolderAssetThumbnailFile
+          .createSync(recursive: true);
+      dbFolderAssetThumbnailFile
+          .writeAsBytesSync(thumbnail.buffer.asUint8List(thumbnail.offsetInBytes, thumbnail.lengthInBytes));
+      return getThumbnail(tempDir: tempDir);
+    }
   }
 }
+
+Map<String, Uint8List> thumbnailCache = {};
+SplayTreeMap<String, DateTime> thumbnailCacheDate = SplayTreeMap<String, DateTime>();

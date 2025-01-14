@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gallery/screens/carousel/carousel_screen.dart';
 import 'package:gallery/screens/home/home_screen.dart';
 import 'package:gallery/screens/local_folder/local_folder_screen.dart';
 import 'package:gallery/screens/settings/settings_screen.dart';
@@ -15,6 +16,8 @@ import 'isolates/media_isolate.dart';
 import 'misc.dart';
 
 late MediaBox mediaBox;
+
+// TODO: add as subpackage: https://github.com/flutter/flutter/tree/3.27.2
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,11 +38,23 @@ GoRouter router = GoRouter(
   routes: [
     homeScreenRoute,
     GoRoute(
+      path: "/item/:itemIndex",
+      builder: (context, state) => CarouselScreen(
+          itemIndex: int.parse(state.pathParameters["itemIndex"]!),
+          path: "timeline")
+    ),
+    GoRoute(
       path: "/settings",
       builder: (context, state) => const SettingsScreen()),
     GoRoute(
       path: "/localFolder/:localFolderId",
-      builder: (context, state) => LocalFolderScreen(localFolder: (mediaBox.getLocalFolder(state.pathParameters["localFolderId"]!))!)
+      builder: (context, state) => LocalFolderScreen(localFolder: (mediaBox.getLocalFolder(state.pathParameters["localFolderId"]!))!),
+      routes: [
+        GoRoute(
+          path: "/item/:itemIndex",
+          builder: (context, state) => CarouselScreen(itemIndex: int.parse(state.pathParameters["itemIndex"]!), path: "folder.${state.pathParameters["localFolderId"]!}")
+        )
+      ]
     )
   ],
 );

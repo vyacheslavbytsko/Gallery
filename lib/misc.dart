@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 List<Widget> flatten(List<dynamic> list) {
   List<Widget> temp = [];
@@ -121,3 +122,5 @@ class TemporaryDirectory extends InheritedWidget {
     return true;
   }
 }
+
+final DateFormat internalFormatter = DateFormat('dd.MM.yyyy');
