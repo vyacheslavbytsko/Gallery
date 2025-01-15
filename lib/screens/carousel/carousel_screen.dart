@@ -38,14 +38,28 @@ class _CarouselScreenState extends State<CarouselScreen> {
 
   @override
   Widget build(BuildContext context) {
+    late Future future;
+    // we get path from main.dart
+    switch(widget.path.split(".")[0]) {
+      case "timeline":
+        future = mediaBox.getShownMediaSortedAsync();
+        break;
+      case "all":
+        future = mediaBox.getMediaSortedAsync();
+        break;
+      case "localFolder":
+        future = mediaBox.getLocalFolderMediaSortedAsync(mediaBox.getLocalFolder(widget.path.split(".")[1])!);
+        break;
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       body: FutureBuilder(
-          future: (widget.path.split(".")[0] == "timeline" ? mediaBox.getShownMediaSortedAsync() : mediaBox.getLocalFolderMediaSortedAsync(mediaBox.getLocalFolder(widget.path.split(".")[1])!)),
+          future: future,
           builder: (context, snapshot) {
             if(snapshot.hasData) {
               List<MediaV1> items = snapshot.requireData;
               return PageView.builder(
+                physics: const CustomPageViewScrollPhysics(),
                 /*onPageChanged: (value) => setState(() {
                   context.replace();
                 }),*/
@@ -120,5 +134,20 @@ class _CarouselScreenState extends State<CarouselScreen> {
       ),
     );
   }
+}
 
+class CustomPageViewScrollPhysics extends ScrollPhysics {
+  const CustomPageViewScrollPhysics({super.parent});
+
+  @override
+  CustomPageViewScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return CustomPageViewScrollPhysics(parent: buildParent(ancestor)!);
+  }
+
+  @override
+  SpringDescription get spring => const SpringDescription(
+    mass: 150,
+    stiffness: 100,
+    damping: 0.8,
+  );
 }

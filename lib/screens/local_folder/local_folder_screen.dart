@@ -90,7 +90,7 @@ class _LocalFolderScreenState extends State<LocalFolderScreen> {
               ]),
             ),
             GalleryView(
-              media: mediaBox.getLocalFolderMediaDatedAsync(widget.localFolder),
+              media: () => mediaBox.getLocalFolderMediaDatedAsync(widget.localFolder),
               locationBuilder: (index) => "/localFolder/${widget.localFolder.id}/item/$index",
             ),
             SliverSafeArea(bottom: true, sliver: SliverList(delegate: SliverChildListDelegate([const SizedBox(height: 8)])))

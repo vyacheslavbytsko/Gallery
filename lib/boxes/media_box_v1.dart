@@ -52,34 +52,16 @@ class MediaBox {
   Future<List<MediaV1>> getLocalFolderMediaAsync(LocalFolderV1 folder) => (_mediaBox.query(MediaV1_.localFolderId.equals(folder.id))).build().findAsync();
   Future<List<MediaV1>> getLocalFolderMediaSortedAsync(LocalFolderV1 folder) => (_localFolderMediaSorted..param(MediaV1_.localFolderId).value = folder.id).findAsync();
 
-  Future<LinkedHashMap<String, List<MediaV1>>> getLocalFolderMediaDatedAsync(LocalFolderV1 folder) async {
-    LinkedHashMap<String, List<MediaV1>> dates = LinkedHashMap();
-    await for(MediaV1 asset in (_localFolderMediaSorted..param(MediaV1_.localFolderId).value = folder.id).stream()) {
-      String formattedDate = internalFormatter.format(asset.date);
-      if(!dates.containsKey(formattedDate)) {
-        dates[formattedDate] = [];
-      }
-      dates[formattedDate]!.add(asset);
-    }
-    return dates;
-  }
+  Future<LinkedHashMap<String, List<MediaV1>>> getLocalFolderMediaDatedAsync(LocalFolderV1 folder) =>
+      dateMedia(_localFolderMediaSorted..param(MediaV1_.localFolderId).value = folder.id);
 
   Future<List<MediaV1>> getLocalMediaAsync() => _localMediaSyncedIsNull.findAsync();
   Future<List<MediaV1>> getLocalSyncedMediaAsync() => _localMediaSyncedIsTrue.findAsync();
   Future<List<MediaV1>> getLocalNotSyncedMediaAsync() => _localMediaSyncedIsFalse.findAsync();
   Future<List<MediaV1>> getMediaSortedAsync() => _mediaSorted.findAsync();
+  Future<LinkedHashMap<String, List<MediaV1>>> getMediaDatedAsync() => dateMedia(_mediaSorted);
   Future<List<MediaV1>> getShownMediaSortedAsync() => _shownMediaSorted.findAsync();
-  Future<LinkedHashMap<String, List<MediaV1>>> getShownMediaDatedAsync() async {
-    LinkedHashMap<String, List<MediaV1>> dates = LinkedHashMap();
-    await for(MediaV1 asset in _shownMediaSorted.stream()) {
-      String formattedDate = internalFormatter.format(asset.date);
-      if(!dates.containsKey(formattedDate)) {
-        dates[formattedDate] = [];
-      }
-      dates[formattedDate]!.add(asset);
-    }
-    return dates;
-  }
+  Future<LinkedHashMap<String, List<MediaV1>>> getShownMediaDatedAsync() => dateMedia(_shownMediaSorted);
   Future<void> addMediaAsync(MediaV1 media) => _mediaBox.putAsync(media, mode: PutMode.insert);
   Future<void> addManyMediaAsync(List<MediaV1> media) => _mediaBox.putManyAsync(media, mode: PutMode.insert);
   Future<void> removeMediaAsync(MediaV1 media) => _mediaBox.removeAsync(media.objectBoxId);
@@ -87,6 +69,18 @@ class MediaBox {
   Future<void> hideManyMediaAsync(List<MediaV1> media) => _mediaBox.putManyAsync(List.generate(media.length, (i) => media[i]..show = false));
   Future<void> showManyMediaAsync(List<MediaV1> media) => _mediaBox.putManyAsync(List.generate(media.length, (i) => media[i]..show = true));
   int get mediaLength => _mediaBox.count();
+
+  Future<LinkedHashMap<String, List<MediaV1>>> dateMedia(Query<MediaV1> query) async {
+    LinkedHashMap<String, List<MediaV1>> dates = LinkedHashMap();
+    await for(MediaV1 asset in query.stream()) {
+      String formattedDate = internalFormatter.format(asset.date);
+      if(!dates.containsKey(formattedDate)) {
+        dates[formattedDate] = [];
+      }
+      dates[formattedDate]!.add(asset);
+    }
+    return dates;
+  }
 }
 
 @Entity()

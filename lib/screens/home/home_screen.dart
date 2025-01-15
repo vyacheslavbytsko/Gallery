@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gallery/screens/home/timeline/timeline_all_media_fragment.dart';
+import 'package:gallery/screens/home/timeline/timeline_timeline_fragment.dart';
 import 'package:go_router/go_router.dart';
 
 import 'library_fragment.dart';
 import 'search_fragment.dart';
-import 'timeline_fragment.dart';
+import 'timeline/timeline_fragment.dart';
 import 'tools_fragment.dart';
 
 StatefulShellRoute homeScreenRoute = StatefulShellRoute.indexedStack(
@@ -13,8 +15,87 @@ StatefulShellRoute homeScreenRoute = StatefulShellRoute.indexedStack(
     },
     branches: List<StatefulShellBranch>.generate(
         destinations.length,
-        (index) => shellBranchWithFragment(
-            destinations[index].fragment, destinations[index].path)));
+        (index) {
+          if(destinations[index].timeline) {
+            return StatefulShellBranch(
+                routes: [
+                  StatefulShellRoute.indexedStack(
+                      builder: (BuildContext context, GoRouterState state,
+                          StatefulNavigationShell timelineNavigationShell) {
+                        return HomeScreenTimelineFragment(navigationShell: timelineNavigationShell);
+                      },
+                      branches: [
+                        StatefulShellBranch(
+                            routes: [
+                              GoRoute(
+                                path: "/",
+                                pageBuilder: (context, state) {
+                                  return CustomTransitionPage(
+                                    key: state.pageKey,
+                                    child: const HomeScreenTimelineTimelineFragment(),
+                                    transitionsBuilder:
+                                        (context, animation, secondaryAnimation, child) {
+                                      return FadeTransition(
+                                        opacity:
+                                        CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+                                        child: child,
+                                      );
+                                    },
+                                  );
+                                },
+                              )
+                            ]
+                        ),
+                        StatefulShellBranch(
+                            routes: [
+                              GoRoute(
+                                path: "/all",
+                                pageBuilder: (context, state) {
+                                  return CustomTransitionPage(
+                                    key: state.pageKey,
+                                    child: const HomeScreenTimelineAllMediaFragment(),
+                                    transitionsBuilder:
+                                        (context, animation, secondaryAnimation, child) {
+                                      return FadeTransition(
+                                        opacity:
+                                        CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+                                        child: child,
+                                      );
+                                    },
+                                  );
+                                },
+                              )
+                            ]
+                        )
+                      ]
+                  )
+                ]
+            );
+          } else {
+            return StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: destinations[index].path,
+                  pageBuilder: (context, state) {
+                    return CustomTransitionPage(
+                      key: state.pageKey,
+                      child: destinations[index].fragment!,
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(
+                          opacity:
+                          CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+                          child: child,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            );
+          }
+        })
+);
 
 class HomeScreen extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -111,44 +192,21 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-StatefulShellBranch shellBranchWithFragment(Widget fragment, String link) {
-  return StatefulShellBranch(
-    routes: <RouteBase>[
-      GoRoute(
-        path: link,
-        pageBuilder: (context, state) {
-          return CustomTransitionPage(
-            key: state.pageKey,
-            child: fragment,
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity:
-                    CurveTween(curve: Curves.easeInOutCirc).animate(animation),
-                child: child,
-              );
-            },
-          );
-        },
-      ),
-    ],
-  );
-}
-
 class Destination {
   final String label;
   final Icon icon;
   final Icon selectedIcon;
   final String path;
-  final Widget fragment;
+  final Widget? fragment;
+  final bool timeline;
 
   const Destination(
-      this.label, this.icon, this.selectedIcon, this.path, this.fragment);
+      this.label, this.icon, this.selectedIcon, this.path, this.fragment, {this.timeline = false});
 }
 
 List<Destination> destinations = const [
   Destination("Timeline", Icon(Icons.photo_outlined), Icon(Icons.photo),
-      "/", HomeScreenTimelineFragment()),
+      "/", null, timeline: true),
   Destination("Library", Icon(Icons.perm_media_outlined),
       Icon(Icons.perm_media), "/library", HomeScreenLibraryFragment()),
   Destination("Search", Icon(Icons.search_outlined), Icon(Icons.search),

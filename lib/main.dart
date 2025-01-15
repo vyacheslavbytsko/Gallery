@@ -38,21 +38,29 @@ GoRouter router = GoRouter(
   routes: [
     homeScreenRoute,
     GoRoute(
-      path: "/item/:itemIndex",
-      builder: (context, state) => CarouselScreen(
-          itemIndex: int.parse(state.pathParameters["itemIndex"]!),
-          path: "timeline")
+        path: "/settings",
+        builder: (context, state) => const SettingsScreen()),
+    GoRoute(
+        path: "/item/:itemIndex",
+        builder: (context, state) => CarouselScreen(
+            itemIndex: int.parse(state.pathParameters["itemIndex"]!),
+            path: "timeline")
     ),
     GoRoute(
-      path: "/settings",
-      builder: (context, state) => const SettingsScreen()),
+        path: "/all/item/:itemIndex",
+        builder: (context, state) => CarouselScreen(
+            itemIndex: int.parse(state.pathParameters["itemIndex"]!),
+            path: "all")
+    ),
     GoRoute(
       path: "/localFolder/:localFolderId",
       builder: (context, state) => LocalFolderScreen(localFolder: (mediaBox.getLocalFolder(state.pathParameters["localFolderId"]!))!),
       routes: [
         GoRoute(
           path: "/item/:itemIndex",
-          builder: (context, state) => CarouselScreen(itemIndex: int.parse(state.pathParameters["itemIndex"]!), path: "folder.${state.pathParameters["localFolderId"]!}")
+          builder: (context, state) => CarouselScreen(
+              itemIndex: int.parse(state.pathParameters["itemIndex"]!),
+              path: "folder.${state.pathParameters["localFolderId"]!}")
         )
       ]
     )

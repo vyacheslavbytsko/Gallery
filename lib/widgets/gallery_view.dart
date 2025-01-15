@@ -8,7 +8,7 @@ import '../misc.dart';
 import 'dynamic_grid.dart';
 
 class GalleryView extends StatefulWidget {
-  final Future<LinkedHashMap<String, List<MediaV1>>> media;
+  final Future<LinkedHashMap<String, List<MediaV1>>> Function() media;
   final String Function(int index) locationBuilder;
 
   const GalleryView({super.key, required this.media, required this.locationBuilder});
@@ -30,7 +30,7 @@ class _GalleryViewState extends State<GalleryView> {
         listenable: timelineChangeNotifier,
         builder: (BuildContext context, Widget? child) {
           return FutureBuilder(
-            future: widget.media,
+            future: widget.media(),
             builder: (context, snapshot) {
               late LinkedHashMap<String, List<MediaV1>> datesAndMedia;
               late List<String> dates;
